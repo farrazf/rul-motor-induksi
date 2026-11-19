@@ -1,0 +1,139 @@
+{
+  "versi_model": "1.0.0",
+  "dibuat": "2026-11-19",
+  "kasus": "03 - Sisa umur pakai motor induksi",
+  "algoritma": "HistGradientBoostingRegressor (loss=absolute_error, 400 pohon) + fitur dari src/features.py",
+  "fitur_input": [
+    "tipe_motor",
+    "hari_operasi",
+    "beban_pct",
+    "arus_A",
+    "tegangan_V",
+    "suhu_belitan_C",
+    "getaran_rms_mm_s",
+    "kecepatan_rpm"
+  ],
+  "fitur_model": [
+    "hari_operasi",
+    "daya_kW",
+    "beban_pct",
+    "arus_A",
+    "tegangan_V",
+    "suhu_belitan_C",
+    "getaran_rms_mm_s",
+    "kecepatan_rpm",
+    "rasio_arus",
+    "slip_pct",
+    "suhu_koreksi",
+    "rpm_koreksi",
+    "getaran_koreksi"
+  ],
+  "target": "rul_hari",
+  "ambang_status": {
+    "segera_ganti_maks_hari": 18,
+    "pesan_pengganti_maks_hari": 45
+  },
+  "alasan_ambang": "pesan: >=95% motor validation mendapat alarm >=28 hari sebelum rusak; segera: >=95% baris validation RUL<=14 tertangkap",
+  "bobot_baris_rul_le_60": 3,
+  "pembagian_data": {
+    "cara": "per motor_id, proporsi tipe dijaga",
+    "seed": 42,
+    "motor_train": 180,
+    "motor_validation": 60,
+    "motor_test": 60
+  },
+  "metrik_validasi": {
+    "baseline": {
+      "MAE RUL≤60": 30.91,
+      "MAE semua baris": 49.59
+    },
+    "model": {
+      "MAE RUL≤60": 7.47,
+      "MAE semua baris": 42.6
+    }
+  },
+  "metrik_test": {
+    "baseline": {
+      "MAE RUL≤60": 30.87,
+      "MAE semua baris": 49.05
+    },
+    "model": {
+      "MAE RUL≤60": 6.84,
+      "MAE semua baris": 39.82
+    }
+  },
+  "kisaran_galat_80persen": [
+    {
+      "tebakan_maks": 14,
+      "bawah": -2.8,
+      "atas": 5.0
+    },
+    {
+      "tebakan_maks": 28,
+      "bawah": -6.0,
+      "atas": 9.8
+    },
+    {
+      "tebakan_maks": 45,
+      "bawah": -10.1,
+      "atas": 19.9
+    },
+    {
+      "tebakan_maks": 60,
+      "bawah": -10.3,
+      "atas": 35.9
+    },
+    {
+      "tebakan_maks": 90,
+      "bawah": -16.0,
+      "atas": 52.6
+    },
+    {
+      "tebakan_maks": 150,
+      "bawah": -35.4,
+      "atas": 75.6
+    },
+    {
+      "tebakan_maks": 10000,
+      "bawah": -87.5,
+      "atas": 130.8
+    }
+  ],
+  "rentang_data_latih": {
+    "hari_operasi": [
+      0.0,
+      528.0
+    ],
+    "beban_pct": [
+      38.9,
+      110.0
+    ],
+    "arus_A": [
+      4.13,
+      47.24
+    ],
+    "tegangan_V": [
+      363.4,
+      396.8
+    ],
+    "suhu_belitan_C": [
+      40.7,
+      98.85
+    ],
+    "getaran_rms_mm_s": [
+      1.56,
+      8.01
+    ],
+    "kecepatan_rpm": [
+      1451.0,
+      1485.0
+    ]
+  },
+  "versi_library": {
+    "python": "3.12.14",
+    "sklearn": "1.9.1",
+    "pandas": "3.1.1",
+    "numpy": "2.5.5",
+    "joblib": "1.6.0"
+  }
+}
