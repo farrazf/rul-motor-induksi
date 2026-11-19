@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Sisa Umur Pakai Motor Induksi</title>
+<style>
+  /* Mengikuti Apple Human Interface Guidelines: font sistem, warna sistem, daftar berkelompok (inset grouped),
+     segmented control, target sentuh minimal 44 pt, dukungan mode gelap dan Reduce Motion. */
+  :root {
+    --latar: #f2f2f7; --grup: #ffffff; --label: #000000; --label2: rgba(60, 60, 67, .6); --label3: rgba(60, 60, 67, .3);
+    --pemisah: rgba(60, 60, 67, .29); --isian: rgba(120, 120, 128, .12); --segmen-aktif: #ffffff;
+    --biru: #007aff; --merah: #ff3b30; --oranye: #ff9500; --hijau: #34c759;
+    --teks-merah: #d70015; --teks-oranye: #c93400; --teks-hijau: #248a3d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --latar: #000000; --grup: #1c1c1e; --label: #ffffff; --label2: rgba(235, 235, 245, .6); --label3: rgba(235, 235, 245, .3);
+      --pemisah: rgba(84, 84, 88, .65); --isian: rgba(120, 120, 128, .24); --segmen-aktif: #636366;
+      --biru: #0a84ff; --merah: #ff453a; --oranye: #ff9f0a; --hijau: #30d158;
+      --teks-merah: #ff6961; --teks-oranye: #ffb340; --teks-hijau: #30db5b;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--latar); color: var(--label);
+    font: 17px/1.3 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: -.01em; -webkit-font-smoothing: antialiased; }
+  main { max-width: 680px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right)) 64px max(16px, env(safe-area-inset-left)); }
+  h1 { font-size: 34px; line-height: 1.2; font-weight: 700; letter-spacing: -.02em; margin: 0 0 6px; }
+  .sub { font-size: 15px; color: var(--label2); margin: 0 0 20px; }
+
+  /* segmented control */
+  .segmen { display: flex; background: var(--isian); border-radius: 9px; padding: 2px; margin-bottom: 8px; }
+  .segmen button { flex: 1; min-height: 36px; border: 0; border-radius: 7px; background: none; color: var(--label);
+    font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: background-color .2s; }
+  .segmen button[aria-selected="true"] { background: var(--segmen-aktif); font-weight: 600;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .12), 0 3px 1px rgba(0, 0, 0, .04); }
+
+  /* daftar berkelompok */
+  .kepala { font-size: 13px; font-weight: 400; color: var(--label2); margin: 22px 16px 7px; }
+  .kaki { font-size: 13px; color: var(--label2); margin: 7px 16px 0; }
+  .grup { background: var(--grup); border-radius: 12px; overflow: hidden; }
+  .baris { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px; position: relative; }
+  .baris + .baris::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; border-top: .5px solid var(--pemisah); }
+  .baris > label, .baris > .nama { flex: 0 0 auto; padding: 11px 0; }
+  .baris input, .baris select { flex: 1 1 0; min-width: 0; height: 44px; border: 0; background: none; color: var(--label);
+    font: inherit; text-align: right; font-variant-numeric: tabular-nums; outline: none; padding: 0; margin: 0;
+    -webkit-appearance: none; appearance: none; -moz-appearance: textfield; }
+  .baris input::-webkit-outer-spin-button, .baris input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .baris input::placeholder { color: var(--label3); }
+  .baris select { text-align-last: right; color: var(--label2); cursor: pointer; padding-right: 18px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16'%3E%3Cpath d='M1.5 6 5 2.5 8.5 6M1.5 10 5 13.5 8.5 10' fill='none' stroke='%238e8e93' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right center; }
+  .satuan { flex: 0 0 auto; color: var(--label2); min-width: 2.6em; }
+  .baris:focus-within { background: var(--isian); }
+  .baris .nilai { margin-left: auto; color: var(--label2); text-align: right; font-variant-numeric: tabular-nums; padding: 11px 0; }
+  .baris.teks { padding-top: 11px; padding-bottom: 11px; font-size: 15px; align-items: flex-start; }
+
+  /* tombol */
+  .utama { display: block; width: 100%; min-height: 50px; margin-top: 22px; border: 0; border-radius: 12px; background: var(--biru);
+    color: #fff; font: inherit; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .utama:active { opacity: .7; } .utama:disabled { opacity: .45; cursor: default; }
+  .kapsul-baris { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 4px; }
+  .kapsul { min-height: 34px; padding: 0 14px; border: 0; border-radius: 17px; background: var(--isian); color: var(--biru);
+    font: inherit; font-size: 15px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .kapsul:active { opacity: .6; }
+  .polos { background: none; border: 0; padding: 0; min-height: 44px; color: var(--biru); font: inherit; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; }
+  button:focus-visible, a:focus-visible, .pilih-berkas:focus-within { outline: 3px solid color-mix(in srgb, var(--biru) 55%, transparent); outline-offset: 2px; }
+
+  /* hasil */
+  #hasil, #hasil-banyak { margin-top: 26px; }
+  .status { display: flex; gap: 12px; padding: 16px; align-items: flex-start; }
+  .status svg { flex: 0 0 auto; width: 30px; height: 30px; margin-top: 1px; }
+  .status h2 { margin: 0 0 3px; font-size: 20px; line-height: 1.25; font-weight: 600; letter-spacing: -.015em; }
+  .status p { margin: 0; font-size: 15px; color: var(--label2); }
+  .status ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; }
+  .status li + li { margin-top: 3px; }
+  .segera h2 { color: var(--teks-merah); } .pesan h2 { color: var(--teks-oranye); } .aman h2 { color: var(--teks-hijau); }
+  .angka { margin-top: 12px; }
+  .angka .nilai { color: var(--label); font-weight: 600; }
+  details { margin: 14px 16px 0; font-size: 13px; color: var(--label2); }
+  summary { cursor: pointer; min-height: 30px; }
+  pre { overflow-x: auto; background: var(--grup); color: var(--label); padding: 12px; border-radius: 12px; font: 12px/1.45 ui-monospace, "SF Mono", Menlo, monospace; }
+  code { font: .88em ui-monospace, "SF Mono", Menlo, monospace; }
+
+  /* banyak motor */
+  .isi { padding: 14px 16px; font-size: 15px; }
+  .isi p { margin: 0 0 10px; }
+  .pilih-berkas { position: relative; overflow: hidden; }
+  .pilih-berkas input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .ringkas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+  .ringkas div { background: var(--grup); border-radius: 12px; padding: 12px 14px; }
+  .ringkas span { display: block; font-size: 13px; color: var(--label2); }
+  .ringkas strong { font-size: 28px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .gulir { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 10px 12px; white-space: nowrap; }
+  th:first-child, td:first-child { padding-left: 16px; }
+  th { font-size: 12px; font-weight: 500; color: var(--label2); }
+  tbody tr { border-top: .5px solid var(--pemisah); }
+  td.lebar { white-space: normal; min-width: 440px; color: var(--label2); }
+  td.angka-sel, th.angka-sel { text-align: right; }
+  .titik { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; }
+  .titik::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+  .titik.segera { color: var(--teks-merah); } .titik.pesan { color: var(--teks-oranye); } .titik.aman { color: var(--teks-hijau); }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Sisa Umur Pakai Motor</h1>
+  <p class="sub">Masukkan pembacaan sensor hari ini untuk memperkirakan sisa umur motor induksi dan menentukan kapan motor pengganti perlu dipesan.</p>
+
+  <div class="segmen" role="tablist" aria-label="Bagian">
+    <button role="tab" aria-selected="true" data-tab="satu">Satu Motor</button>
+    <button role="tab" aria-selected="false" data-tab="banyak">Banyak Motor</button>
+    <button role="tab" aria-selected="false" data-tab="tentang">Tentang Model</button>
+  </div>
+
+  <!-- ===================== satu motor ===================== -->
+  <section id="tab-satu">
+    <form id="formulir" novalidate>
+      <h2 class="kepala">Motor</h2>
+      <div class="grup">
+        <div class="baris">
+          <label for="tipe_motor">Tipe motor</label>
+          <select id="tipe_motor"><option value="5.5kW">5,5 kW</option><option value="11kW" selected>11 kW</option><option value="22kW">22 kW</option></select>
+        </div>
+        <div class="baris">
+          <label for="hari_operasi">Hari operasi</label>
+          <input type="number" id="hari_operasi" step="1" inputmode="numeric" placeholder="Wajib diisi">
+          <span class="satuan">hari</span>
+        </div>
+      </div>
+      <p class="kaki">Hari operasi dihitung sejak motor dipasang.</p>
+
+      <h2 class="kepala">Pembacaan sensor hari ini</h2>
+      <div class="grup" id="wadah-sensor"></div>
+      <p class="kaki">Kosongkan isian bila sebuah sensor sedang tidak tersedia. Model tetap menjawab, disertai catatan.</p>
+
+      <button class="utama" type="submit" id="tombol">Perkirakan Sisa Umur</button>
+
+      <h2 class="kepala">Isi dengan contoh</h2>
+      <div class="kapsul-baris">
+        <button class="kapsul" type="button" data-contoh="sehat">Motor sehat</button>
+        <button class="kapsul" type="button" data-contoh="dekat">Mendekati rusak</button>
+        <button class="kapsul" type="button" data-contoh="kritis">Hampir rusak</button>
+        <button class="kapsul" type="button" data-contoh="mustahil">Masukan mustahil</button>
+      </div>
+    </form>
+    <div id="hasil" aria-live="polite"></div>
+  </section>
+
+  <!-- ===================== banyak motor ===================== -->
+  <section id="tab-banyak" hidden>
+    <h2 class="kepala">Unggah CSV</h2>
+    <div class="grup isi">
+      <p>Satu baris per motor dengan kolom <code id="kolom-csv"></code>. Kolom <code>motor_id</code> boleh disertakan sebagai pengenal.</p>
+      <div class="kapsul-baris" style="align-items:center; gap:16px; margin:0">
+        <label class="kapsul pilih-berkas">Pilih Berkas CSV<input type="file" id="berkas" accept=".csv,text/csv"></label>
+        <a class="polos" href="/contoh.csv" download="contoh_batch.csv">Unduh Contoh</a>
+      </div>
+    </div>
+    <p class="kaki" id="nama-berkas">Paling banyak 1.000 baris per berkas.</p>
+    <div id="hasil-banyak" aria-live="polite"></div>
+  </section>
+
+  <!-- ===================== tentang ===================== -->
+  <section id="tab-tentang" hidden>
+    <div id="tentang"><p class="kaki">Memuat…</p></div>
+  </section>
+</main>
+
+<script>
+// Halaman ini hanya antarmuka: semua perhitungan dilakukan API (/predict, /predict/tabel, /health).
+const SENSOR = [  // [kolom, label, satuan, langkah]
+  ["beban_pct", "Beban", "%", 0.5], ["arus_A", "Arus", "A", 0.1], ["tegangan_V", "Tegangan", "V", 0.5],
+  ["suhu_belitan_C", "Suhu belitan", "°C", 0.5], ["getaran_rms_mm_s", "Getaran RMS", "mm/s", 0.1], ["kecepatan_rpm", "Kecepatan", "rpm", 1],
+];
+const CONTOH = {
+  sehat:    { tipe_motor: "11kW", hari_operasi: 30,  beban_pct: 76, arus_A: 16.4, tegangan_V: 380, suhu_belitan_C: 59.5, getaran_rms_mm_s: 2.05, kecepatan_rpm: 1475 },
+  dekat:    { tipe_motor: "11kW", hari_operasi: 240, beban_pct: 76, arus_A: 17.4, tegangan_V: 380, suhu_belitan_C: 78.5, getaran_rms_mm_s: 5.6,  kecepatan_rpm: 1462 },
+  kritis:   { tipe_motor: "11kW", hari_operasi: 280, beban_pct: 76, arus_A: 17.9, tegangan_V: 380, suhu_belitan_C: 84,   getaran_rms_mm_s: 7.3,  kecepatan_rpm: 1458 },
+  mustahil: { tipe_motor: "11kW", hari_operasi: 240, beban_pct: 76, arus_A: 17.4, tegangan_V: 380, suhu_belitan_C: 78.5, getaran_rms_mm_s: -5,   kecepatan_rpm: 3000 },
+};
+const STATUS = {  // nama dari API -> [kelas, judul yang ditampilkan]
+  "SEGERA GANTI": ["segera", "Segera Ganti"], "PESAN PENGGANTI SEKARANG": ["pesan", "Pesan Pengganti Sekarang"], "AMAN": ["aman", "Aman"],
+};
+// ikon digambar sendiri sebagai SVG (lingkaran berisi tanda), warnanya mengikuti warna sistem
+const IKON = {
+  aman: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--hijau)"/><path d="M8.6 15.6l4.3 4.3 8.6-9.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  pesan: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--oranye)"/><path d="M15 7.5v8.2l5 3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  segera: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--merah)"/><path d="M15 7.8v9" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><circle cx="15" cy="21.6" r="1.7" fill="#fff"/></svg>',
+};
+IKON.galat = IKON.segera;
+const $ = (id) => document.getElementById(id);
+let FITUR = ["tipe_motor", "hari_operasi", ...SENSOR.map((s) => s[0])];
+
+// elemen dibuat dengan textContent (bukan innerHTML) supaya teks dari pengguna/CSV tidak bisa menyisipkan HTML
+function el(tag, props = {}, anak = []) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) { if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else e.setAttribute(k, v); }
+  for (const a of [].concat(anak)) e.append(a);
+  return e;
+}
+function ikon(nama) { const t = document.createElement("template"); t.innerHTML = IKON[nama]; return t.content.firstChild; }  // isi tetap, bukan dari pengguna
+const bulat = (x) => Math.round(x).toLocaleString("id-ID");
+const baris = (nama, nilai) => el("div", { class: "baris" }, [el("span", { class: "nama", text: nama }), el("span", { class: "nilai", text: nilai })]);
+
+// ---------- formulir
+for (const [kolom, label, satuan, langkah] of SENSOR) {
+  $("wadah-sensor").append(el("div", { class: "baris" }, [el("label", { for: kolom, text: label }),
+    el("input", { type: "number", id: kolom, step: langkah, inputmode: "decimal", placeholder: "Tidak tersedia" }), el("span", { class: "satuan", text: satuan })]));
+}
+function isi(nilai) {
+  $("tipe_motor").value = nilai.tipe_motor; $("hari_operasi").value = nilai.hari_operasi;
+  for (const [kolom] of SENSOR) $(kolom).value = nilai[kolom];
+}
+isi(CONTOH.dekat);
+document.querySelectorAll("[data-contoh]").forEach((b) => b.addEventListener("click", () => { isi(CONTOH[b.dataset.contoh]); $("hasil").replaceChildren(); }));
+
+function bacaFormulir() {
+  const angka = (id) => ($(id).value.trim() === "" ? null : Number($(id).value));  // kosong = sensor tidak tersedia
+  const row = { tipe_motor: $("tipe_motor").value, hari_operasi: angka("hari_operasi") };
+  for (const [kolom] of SENSOR) row[kolom] = angka(kolom);
+  return row;
+}
+function kartuGalat(judul, daftar) {
+  const ul = el("ul"); daftar.forEach((p) => ul.append(el("li", { text: p })));
+  return el("div", { class: "grup status galat", role: "alert" }, [ikon("galat"), el("div", {}, [el("h2", { text: judul }), ...(daftar.length ? [ul] : [])])]);
+}
+function tampilkanHasil(row, h) {
+  const wadah = $("hasil"), [kelas, judul] = STATUS[h.status]; wadah.replaceChildren();
+  wadah.append(el("div", { class: "grup status " + kelas }, [ikon(kelas), el("div", {}, [el("h2", { text: judul }), el("p", { text: h.saran })])]));
+  wadah.append(el("div", { class: "grup angka" }, [baris("Perkiraan sisa umur", bulat(h.rul_hari) + " hari"),
+    baris("Kisaran 80%", bulat(h.rul_bawah) + "–" + bulat(h.rul_atas) + " hari")]));
+  if (h.catatan.length) {
+    wadah.append(el("h2", { class: "kepala", text: "Catatan" }));
+    wadah.append(el("div", { class: "grup" }, h.catatan.map((c) => el("div", { class: "baris teks", text: c }))));
+  }
+  wadah.append(el("details", {}, [el("summary", { text: "Lihat request dan response JSON" }), el("pre", { text: JSON.stringify({ request: row, response: h }, null, 2) })]));
+}
+$("formulir").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const row = bacaFormulir(), tombol = $("tombol");
+  tombol.disabled = true; tombol.textContent = "Menghitung…";
+  try {
+    const r = await fetch("/predict", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(row) });
+    const data = await r.json();
+    if (r.status === 422) $("hasil").replaceChildren(kartuGalat("Masukan Tidak Wajar", data.pesan || ["Periksa kembali isian."]));
+    else if (!r.ok) throw new Error("Server menjawab " + r.status);
+    else tampilkanHasil(row, data);
+  } catch (e) {
+    $("hasil").replaceChildren(kartuGalat("Tidak Dapat Menghubungi Server", [String(e.message || e)]));
+  } finally { tombol.disabled = false; tombol.textContent = "Perkirakan Sisa Umur"; }
+  $("hasil").scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+});
+
+// ---------- unggah CSV
+function bacaCsv(teks) {
+  const b = teks.replace(/^﻿/, "").split(/\r?\n/).filter((x) => x.trim() !== "");
+  const pemisah = (b[0].match(/;/g) || []).length > (b[0].match(/,/g) || []).length ? ";" : ",";  // Excel Indonesia memakai ;
+  const kepala = b[0].split(pemisah).map((k) => k.trim());
+  return { kepala, data: b.slice(1).map((x) => { const sel = x.split(pemisah); return Object.fromEntries(kepala.map((k, i) => [k, (sel[i] ?? "").trim()])); }) };
+}
+const pemisahDesimal = (v) => (/^-?\d+,\d+$/.test(v) ? v.replace(",", ".") : v);
+$("berkas").addEventListener("change", async (ev) => {
+  const wadah = $("hasil-banyak"); wadah.replaceChildren();
+  const berkas = ev.target.files[0]; if (!berkas) return;
+  $("nama-berkas").textContent = "Berkas: " + berkas.name;
+  try {
+    const { kepala, data } = bacaCsv(await berkas.text());
+    const kurang = FITUR.filter((k) => !kepala.includes(k));
+    if (kurang.length) return wadah.append(kartuGalat("Kolom Kurang", kurang));
+    if (!data.length) return wadah.append(kartuGalat("Berkas Tidak Berisi Baris Data", []));
+    if (data.length > 1000) return wadah.append(kartuGalat("Terlalu Banyak Baris", ["Paling banyak 1.000 baris per berkas."]));
+    // sel kosong -> null (sensor kosong); angka -> Number; teks dibiarkan supaya server yang menolak dengan alasan jelas
+    const rows = data.map((d) => Object.fromEntries(FITUR.map((k) => {
+      const v = d[k]; if (v === "") return [k, null];
+      if (k === "tipe_motor") return [k, v];
+      const n = Number(pemisahDesimal(v)); return [k, Number.isNaN(n) ? v : n];
+    })));
+    const r = await fetch("/predict/tabel", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(rows) });
+    if (!r.ok) throw new Error("Server menjawab " + r.status);
+    tampilkanTabel(kepala.filter((k) => !FITUR.includes(k)), data, await r.json());
+  } catch (e) { wadah.append(kartuGalat("Berkas Tidak Dapat Diproses", [String(e.message || e)])); }
+});
+
+function tampilkanTabel(pengenal, data, jawaban) {
+  const wadah = $("hasil-banyak");
+  const baik = jawaban.filter((j) => j.ok).map((j) => ({ ...data[j.baris - 1], ...j.hasil })).sort((a, b) => a.rul_hari - b.rul_hari);
+  const ditolak = jawaban.filter((j) => !j.ok);
+  const hitung = (s) => baik.filter((b) => b.status === s).length;
+  wadah.append(el("div", { class: "ringkas" }, [
+    el("div", {}, [el("span", { text: "Segera ganti" }), el("strong", { text: hitung("SEGERA GANTI") })]),
+    el("div", {}, [el("span", { text: "Pesan pengganti" }), el("strong", { text: hitung("PESAN PENGGANTI SEKARANG") })]),
+    el("div", {}, [el("span", { text: "Aman" }), el("strong", { text: hitung("AMAN") })]),
+  ]));
+  if (ditolak.length) {
+    wadah.append(kartuGalat(ditolak.length + " Baris Ditolak", ditolak.map((j) => "Baris ke-" + j.baris + ": " + j.galat.join("; "))));
+    wadah.append(el("p", { class: "kaki", text: "Baris lain tetap diproses." }));
+  }
+  if (!baik.length) return;
+  const JUDUL = { status: "Status", rul_hari: "Sisa umur", kisaran: "Kisaran 80%", catatan: "Catatan" };
+  const kolom = [...pengenal, "status", "rul_hari", "kisaran", ...FITUR, "catatan"];
+  const angkaSel = (k) => k !== "tipe_motor" && (FITUR.includes(k) || k === "rul_hari" || k === "kisaran");
+  const tabel = el("table", {}, [el("thead", {}, [el("tr", {}, kolom.map((k) => el("th", { class: angkaSel(k) ? "angka-sel" : "", text: JUDUL[k] || k })))])]);
+  const badan = el("tbody");
+  for (const b of baik) {
+    badan.append(el("tr", {}, kolom.map((k) => {
+      if (k === "status") return el("td", {}, [el("span", { class: "titik " + STATUS[b.status][0], text: STATUS[b.status][1] })]);
+      if (k === "rul_hari") return el("td", { class: "angka-sel", text: bulat(b.rul_hari) + " hari" });
+      if (k === "kisaran") return el("td", { class: "angka-sel", text: bulat(b.rul_bawah) + "–" + bulat(b.rul_atas) });
+      if (k === "catatan") return el("td", { class: "lebar", text: b.catatan.join(" ") });
+      return el("td", { class: angkaSel(k) ? "angka-sel" : "", text: b[k] === "" ? "kosong" : b[k] });
+    })));
+  }
+  tabel.append(badan);
+  wadah.append(el("h2", { class: "kepala", text: "Hasil, diurutkan dari yang paling mendesak" }));
+  wadah.append(el("div", { class: "grup gulir" }, [tabel]));
+  const unduh = el("button", { class: "polos", type: "button", text: "Unduh Hasil (CSV)", style: "margin: 6px 16px 0" });
+  unduh.addEventListener("click", () => {
+    const kol = [...pengenal, "status", "rul_hari", "rul_bawah", "rul_atas", ...FITUR, "catatan"];
+    const sel = (v) => '"' + String(Array.isArray(v) ? v.join(" ") : v ?? "").replaceAll('"', '""') + '"';
+    const csv = [kol.join(","), ...baik.map((b) => kol.map((k) => sel(b[k])).join(","))].join("\n");
+    el("a", { href: URL.createObjectURL(new Blob([csv], { type: "text/csv" })), download: "hasil_prediksi.csv" }).click();
+  });
+  wadah.append(unduh);
+}
+
+// ---------- segmented control dan informasi model
+document.querySelectorAll("[data-tab]").forEach((t) => t.addEventListener("click", () => {
+  document.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-selected", x === t));
+  for (const n of ["satu", "banyak", "tentang"]) $("tab-" + n).hidden = n !== t.dataset.tab;
+}));
+fetch("/health").then((r) => r.json()).then((m) => {
+  FITUR = m.fitur_input;
+  const a = m.ambang_status, uji = m.metrik_test.model, dasar = m.metrik_test.baseline;
+  const satu = (x) => x.toFixed(1).replace(".", ",") + " hari";
+  $("kolom-csv").textContent = FITUR.join(", ");
+  const t = $("tentang"); t.replaceChildren();
+  t.append(el("h2", { class: "kepala", text: "Model" }));
+  t.append(el("div", { class: "grup" }, [baris("Versi", m.versi_model), baris("Algoritma", "Gradient boosting"),
+    baris("Motor untuk melatih", "240"), baris("Motor untuk menguji", String(m.motor_test))]));
+  t.append(el("p", { class: "kaki", text: "Motor penguji tidak pernah dilihat model selama pelatihan." }));
+  t.append(el("h2", { class: "kepala", text: "Galat rata-rata pada motor penguji" }));
+  t.append(el("div", { class: "grup" }, [baris("Sisa umur ≤ 60 hari, model ini", satu(uji["MAE RUL≤60"])), baris("Sisa umur ≤ 60 hari, regresi linear", satu(dasar["MAE RUL≤60"])),
+    baris("Semua baris, model ini", satu(uji["MAE semua baris"])), baris("Semua baris, regresi linear", satu(dasar["MAE semua baris"]))]));
+  t.append(el("h2", { class: "kepala", text: "Arti status" }));
+  t.append(el("div", { class: "grup" }, [
+    el("div", { class: "baris teks", text: `Segera Ganti: sisa umur ≤ ${a.segera_ganti_maks_hari} hari. Pengiriman tercepat (2 minggu) kemungkinan tidak terkejar.` }),
+    el("div", { class: "baris teks", text: `Pesan Pengganti Sekarang: sisa umur ≤ ${a.pesan_pengganti_maks_hari} hari. Ambang ini lebih besar daripada pengiriman terlama (4 minggu) karena sudah memuat margin untuk galat model.` }),
+    el("div", { class: "baris teks", text: "Aman: di atas itu. Lanjutkan pemantauan harian." }),
+  ]));
+  t.append(el("h2", { class: "kepala", text: "Yang perlu diingat" }));
+  t.append(el("div", { class: "grup" }, [
+    el("div", { class: "baris teks", text: "Model paling tepat pada dua bulan terakhir umur motor. Selama motor masih sehat, sensor belum memberi tanda, sehingga angka di atas ±150 hari hanya berarti “masih lama”." }),
+    el("div", { class: "baris teks", text: "Tebakan dibuat dari pembacaan satu hari, jadi bisa naik-turun beberapa hari mengikuti derau sensor. Lihat arahnya selama beberapa hari sebelum membatalkan pesanan." }),
+    el("div", { class: "baris teks", text: "Model hanya mengenal motor 5,5 kW, 11 kW, dan 22 kW yang belum pernah diperbaiki, pada tegangan 380 V." }),
+  ]));
+  t.append(el("p", { class: "kaki" }, [el("a", { class: "polos", href: "/docs", text: "Dokumentasi API" })]));
+}).catch(() => { $("tentang").replaceChildren(el("p", { class: "kaki", text: "Informasi model tidak dapat dimuat." })); });
+</script>
+</body>
+</html>
