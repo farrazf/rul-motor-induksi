@@ -1,0 +1,6 @@
+# Tambahan untuk menjalankan notebook dan tes (tidak dibutuhkan aplikasi yang di-deploy).
+-r requirements.txt
+jupyter
+matplotlib
+pytest
+httpx
