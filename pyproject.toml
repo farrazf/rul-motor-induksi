@@ -1,0 +1,19 @@
+# Dipakai Vercel untuk men-deploy API + halaman web (app/api/main.py).
+# Hanya berisi library yang dibutuhkan saat prediksi; Streamlit, Jupyter, dan pytest ada di requirements*.txt.
+[project]
+name = "rul-motor-induksi"
+version = "1.0.0"
+description = "Prediksi sisa umur pakai (RUL) motor induksi dari pembacaan sensor harian"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # versi sama dengan saat model dilatih (lihat artifacts/metadata.json), supaya model.joblib terbaca persis sama
+    "scikit-learn==1.9.1",
+    "pandas==3.1.1",
+    "numpy==2.5.5",
+    "joblib==1.6.0",
+    "fastapi==0.165.0",
+    "pydantic==2.14.3",
+]
+
+[tool.vercel]
+entrypoint = "app.api.main:app"

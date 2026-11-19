@@ -1,0 +1,19 @@
+# Yang tidak dibutuhkan saat aplikasi berjalan tidak ikut diunggah ke Vercel
+.venv
+.git
+.pytest_cache
+__pycache__
+*.pyc
+notebooks
+laporan
+tests
+app/ui
+.streamlit
+data/raw.csv
+data/bersih.csv
+requirements.txt
+requirements-dev.txt
+Dockerfile
+.dockerignore
+pytest.ini
+README.md
