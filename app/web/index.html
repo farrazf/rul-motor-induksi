@@ -5,22 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>Sisa Umur Pakai Motor Induksi</title>
+<script>
+  // pilihan tema dipasang sebelum halaman digambar supaya tidak berkedip
+  try { const t = localStorage.getItem("tema"); if (t === "gelap" || t === "terang") document.documentElement.dataset.tema = t; } catch (e) {}
+</script>
 <style>
   /* Mengikuti Apple Human Interface Guidelines: font sistem, warna sistem, daftar berkelompok (inset grouped),
-     segmented control, target sentuh minimal 44 pt, dukungan mode gelap dan Reduce Motion. */
+     segmented control, target sentuh minimal 44 pt, mode terang dan gelap, dukungan Reduce Motion. */
   :root {
+    color-scheme: light;
     --latar: #f2f2f7; --grup: #ffffff; --label: #000000; --label2: rgba(60, 60, 67, .6); --label3: rgba(60, 60, 67, .3);
     --pemisah: rgba(60, 60, 67, .29); --isian: rgba(120, 120, 128, .12); --segmen-aktif: #ffffff;
-    --biru: #007aff; --merah: #ff3b30; --oranye: #ff9500; --hijau: #34c759;
+    --aksen: #007aff; --pada-aksen: #ffffff; --garis-tautan: none;
+    --merah: #ff3b30; --oranye: #ff9500; --hijau: #34c759; --pada-ikon: #ffffff;
     --teks-merah: #d70015; --teks-oranye: #c93400; --teks-hijau: #248a3d;
   }
+  /* Mode gelap: permukaan grafit netral, tombol utama putih gading, warna hanya untuk status.
+     Mengikuti pengaturan sistem, kecuali pengguna memilih sendiri lewat tombol (data-tema pada <html>). */
   @media (prefers-color-scheme: dark) {
-    :root {
-      --latar: #000000; --grup: #1c1c1e; --label: #ffffff; --label2: rgba(235, 235, 245, .6); --label3: rgba(235, 235, 245, .3);
-      --pemisah: rgba(84, 84, 88, .65); --isian: rgba(120, 120, 128, .24); --segmen-aktif: #636366;
-      --biru: #0a84ff; --merah: #ff453a; --oranye: #ff9f0a; --hijau: #30d158;
-      --teks-merah: #ff6961; --teks-oranye: #ffb340; --teks-hijau: #30db5b;
+    :root:not([data-tema="terang"]) {
+      color-scheme: dark;
+      --latar: #131312; --grup: #1c1c1a; --label: #edebe4; --label2: rgba(237, 235, 228, .62); --label3: rgba(237, 235, 228, .32);
+      --pemisah: rgba(237, 235, 228, .14); --isian: rgba(237, 235, 228, .08); --segmen-aktif: #34342f;
+      --aksen: #edebe4; --pada-aksen: #131312; --garis-tautan: underline;
+      --merah: #e5484d; --oranye: #f0a23b; --hijau: #4cc38a; --pada-ikon: #131312;
+      --teks-merah: #f0787c; --teks-oranye: #f0a23b; --teks-hijau: #4cc38a;
     }
+  }
+  :root[data-tema="gelap"] {
+    color-scheme: dark;
+    --latar: #131312; --grup: #1c1c1a; --label: #edebe4; --label2: rgba(237, 235, 228, .62); --label3: rgba(237, 235, 228, .32);
+    --pemisah: rgba(237, 235, 228, .14); --isian: rgba(237, 235, 228, .08); --segmen-aktif: #34342f;
+    --aksen: #edebe4; --pada-aksen: #131312; --garis-tautan: underline;
+    --merah: #e5484d; --oranye: #f0a23b; --hijau: #4cc38a; --pada-ikon: #131312;
+    --teks-merah: #f0787c; --teks-oranye: #f0a23b; --teks-hijau: #4cc38a;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -28,7 +46,9 @@
     font: 17px/1.3 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
     letter-spacing: -.01em; -webkit-font-smoothing: antialiased; }
   main { max-width: 680px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right)) 64px max(16px, env(safe-area-inset-left)); }
+  .judul { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
   h1 { font-size: 34px; line-height: 1.2; font-weight: 700; letter-spacing: -.02em; margin: 0 0 6px; }
+  #tema { flex: 0 0 auto; font-size: 15px; text-decoration: none; }
   .sub { font-size: 15px; color: var(--label2); margin: 0 0 20px; }
 
   /* segmented control */
@@ -58,16 +78,17 @@
   .baris.teks { padding-top: 11px; padding-bottom: 11px; font-size: 15px; align-items: flex-start; }
 
   /* tombol */
-  .utama { display: block; width: 100%; min-height: 50px; margin-top: 22px; border: 0; border-radius: 12px; background: var(--biru);
-    color: #fff; font: inherit; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .utama { display: block; width: 100%; min-height: 50px; margin-top: 22px; border: 0; border-radius: 12px; background: var(--aksen);
+    color: var(--pada-aksen); font: inherit; font-weight: 600; cursor: pointer; transition: opacity .15s; }
   .utama:active { opacity: .7; } .utama:disabled { opacity: .45; cursor: default; }
   .kapsul-baris { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 4px; }
-  .kapsul { min-height: 34px; padding: 0 14px; border: 0; border-radius: 17px; background: var(--isian); color: var(--biru);
+  .kapsul { min-height: 34px; padding: 0 14px; border: 0; border-radius: 17px; background: var(--isian); color: var(--aksen);
     font: inherit; font-size: 15px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
   .kapsul:active { opacity: .6; }
-  .polos { background: none; border: 0; padding: 0; min-height: 44px; color: var(--biru); font: inherit; cursor: pointer; text-decoration: none;
+  .polos { background: none; border: 0; padding: 0; min-height: 44px; color: var(--aksen); font: inherit; cursor: pointer;
+    text-decoration: var(--garis-tautan); text-decoration-color: var(--label3); text-underline-offset: 3px;
     display: inline-flex; align-items: center; }
-  button:focus-visible, a:focus-visible, .pilih-berkas:focus-within { outline: 3px solid color-mix(in srgb, var(--biru) 55%, transparent); outline-offset: 2px; }
+  button:focus-visible, a:focus-visible, .pilih-berkas:focus-within { outline: 3px solid color-mix(in srgb, var(--aksen) 55%, transparent); outline-offset: 2px; }
 
   /* hasil */
   #hasil, #hasil-banyak { margin-top: 26px; }
@@ -111,7 +132,10 @@
 </head>
 <body>
 <main>
-  <h1>Sisa Umur Pakai Motor</h1>
+  <div class="judul">
+    <h1>Sisa Umur Pakai Motor</h1>
+    <button class="polos" type="button" id="tema" aria-pressed="false">Mode Gelap</button>
+  </div>
   <p class="sub">Masukkan pembacaan sensor hari ini untuk memperkirakan sisa umur motor induksi dan menentukan kapan motor pengganti perlu dipesan.</p>
 
   <div class="segmen" role="tablist" aria-label="Bagian">
@@ -191,9 +215,9 @@ const STATUS = {  // nama dari API -> [kelas, judul yang ditampilkan]
 };
 // ikon digambar sendiri sebagai SVG (lingkaran berisi tanda), warnanya mengikuti warna sistem
 const IKON = {
-  aman: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--hijau)"/><path d="M8.6 15.6l4.3 4.3 8.6-9.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  pesan: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--oranye)"/><path d="M15 7.5v8.2l5 3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  segera: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--merah)"/><path d="M15 7.8v9" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><circle cx="15" cy="21.6" r="1.7" fill="#fff"/></svg>',
+  aman: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--hijau)"/><path d="M8.6 15.6l4.3 4.3 8.6-9.4" fill="none" stroke="var(--pada-ikon)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  pesan: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--oranye)"/><path d="M15 7.5v8.2l5 3" fill="none" stroke="var(--pada-ikon)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  segera: '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="var(--merah)"/><path d="M15 7.8v9" fill="none" stroke="var(--pada-ikon)" stroke-width="2.8" stroke-linecap="round"/><circle cx="15" cy="21.6" r="1.7" fill="var(--pada-ikon)"/></svg>',
 };
 IKON.galat = IKON.segera;
 const $ = (id) => document.getElementById(id);
@@ -330,6 +354,17 @@ function tampilkanTabel(pengenal, data, jawaban) {
   });
   wadah.append(unduh);
 }
+
+// ---------- tema: mengikuti sistem sampai pengguna memilih sendiri; pilihan disimpan di peramban ini
+const sistemGelap = matchMedia("(prefers-color-scheme: dark)");
+const sedangGelap = () => (document.documentElement.dataset.tema ? document.documentElement.dataset.tema === "gelap" : sistemGelap.matches);
+function labelTema() { $("tema").textContent = sedangGelap() ? "Mode Terang" : "Mode Gelap"; $("tema").setAttribute("aria-pressed", sedangGelap()); }
+$("tema").addEventListener("click", () => {
+  const t = sedangGelap() ? "terang" : "gelap"; document.documentElement.dataset.tema = t;
+  try { localStorage.setItem("tema", t); } catch (e) { /* penyimpanan diblokir: pilihan berlaku sampai halaman ditutup */ }
+  labelTema();
+});
+sistemGelap.addEventListener("change", labelTema); labelTema();
 
 // ---------- segmented control dan informasi model
 document.querySelectorAll("[data-tab]").forEach((t) => t.addEventListener("click", () => {
