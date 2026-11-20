@@ -4,7 +4,7 @@
 
 | Anggota | NIM | Bagian yang dikerjakan |
 |---|---|---|
-| Farraz Firdaus Nuradianto | 2405166 | API FastAPI dan validasi masukan, halaman web, uji otomatis, *deployment*, serta bagian 5–6 laporan |
+| Farraz Firdaus Nur Ardiyanto | 2405166 | API FastAPI dan validasi masukan, halaman web, uji otomatis, *deployment*, serta bagian 5–6 laporan |
 | Jundan Abdul Wahhab | 2405647 | EDA dan pembersihan data, `src/features.py`, *baseline*, perbandingan dan evaluasi model, ambang status, serta bagian 1–4 laporan |
 
 ## Masalah dan pengguna

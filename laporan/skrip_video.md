@@ -1,109 +1,117 @@
 # Skrip dan Skenario Video Demo · Kasus 03 Sisa Umur Pakai Motor Induksi
 
-Target durasi **4 menit 30 detik** (batas 5 menit, cadangan 30 detik). Susunannya mengikuti pembagian waktu dari
-README mata kuliah: masalah 30 detik, arsitektur 90 detik, demo 90 detik, hasil dan keterbatasan 60 detik.
+Target durasi **4 menit 35 detik** (batas 5 menit, cadangan 25 detik). Susunannya kurang lebih mengikuti pembagian waktu
+dari README mata kuliah: masalah, arsitektur (data → model → API → aplikasi), demo, lalu hasil dan keterbatasan.
 
 Aturan mata kuliah: **setiap anggota menjelaskan bagian yang dikerjakannya sendiri.** Pembagian di bawah mengikuti
 pembagian kerja di README dan lampiran laporan: Jundan memegang data dan model, Farraz memegang API dan aplikasi.
 
 | Pembicara | Bagian | Waktu | Lama |
 |---|---|---|---|
-| Farraz | Masalah dan pengguna | 0:00–0:30 | 30 detik |
-| Jundan | Data dan pembersihan, pembagian data, model | 0:30–1:35 | 65 detik |
-| Farraz | API, *deployment*, dan demo langsung | 1:35–3:30 | 115 detik |
-| Jundan | Hasil, *baseline*, keterbatasan, penutup | 3:30–4:30 | 60 detik |
+| Farraz | Perkenalan, masalah, dan pengguna | 0:00–0:40 | 40 detik |
+| Jundan | Data dan pembersihan, pembagian data, model | 0:40–1:50 | 70 detik |
+| Farraz | API, *deployment*, dan demo langsung | 1:50–3:35 | 105 detik |
+| Jundan | Hasil, *baseline*, keterbatasan, penutup | 3:35–4:35 | 60 detik |
 
-Total Farraz 2 menit 25 detik, Jundan 2 menit 5 detik. Hanya ada tiga kali pergantian pembicara.
+Total Farraz 2 menit 25 detik, Jundan 2 menit 10 detik. Hanya ada tiga kali pergantian pembicara.
+
+**Cara memakai narasi.** Narasi di bawah ditulis seperti orang berbicara, bukan seperti tulisan laporan, dan angkanya
+dibulatkan supaya enak diucapkan. Tidak perlu dibaca kata per kata: pahami isi tiap paragraf, lalu ucapkan dengan gaya
+bicara sendiri. Yang harus tetap sama hanya urutan isi dan angkanya. Angka persisnya ada di tabel pada akhir dokumen ini.
 
 ## Persiapan sebelum merekam
 
-Buka semua ini lebih dulu, masing-masing di tab atau jendela sendiri, supaya tidak ada waktu terbuang untuk mencari:
+Yang direkam hanya **suara**. Gambar di layar disusun belakangan mengikuti suara.
 
-1. `laporan/gambar/10_arsitektur.png` (diagram arsitektur)
-2. *Notebook* `notebooks/rul_motor_induksi.ipynb`, digulir ke tabel ringkasan masalah data (akhir bagian 2)
-3. `laporan/gambar/05_getaran_per_umur.png` (getaran menurut umur total motor)
-4. `src/features.py` dan `artifacts/metadata.json` di editor
-5. https://ml.deltavia.org (aplikasi) dan https://ml.deltavia.org/docs (dokumentasi API)
-6. `data/contoh_batch.csv` sudah ada di folder yang mudah dipilih saat unggah
-7. `laporan/gambar/08_hasil_test.png` (hasil pada data *test*)
-
-Hal teknis:
-
-- Rekam layar 1080p, perbesar tampilan browser ke 125–150% supaya angka terbaca.
-- Buka aplikasi sekali sebelum merekam. Permintaan pertama setelah lama tidak dipakai butuh beberapa detik lebih lama.
-- Tutup notifikasi dan tab pribadi. Wajah pembicara cukup di sudut layar atau di awal bagiannya.
-- Latihan satu kali dengan *stopwatch*. Jika lewat 4:45, buang langkah demo nomor 4 (sensor kosong).
+- Rekam satu berkas per bagian: `1_farraz`, `2a_jundan`, `2b_jundan`, `2c_farraz`, `3_farraz`, `4_jundan`.
+- Rekam di ruangan yang sepi, dengan jarak ponsel atau mikrofon yang sama dari awal sampai akhir.
+- Kalau salah ucap, diam sebentar lalu ulangi kalimatnya dari awal. Bagian yang salah dibuang saat penyuntingan.
+- Di bagian demo (bagian 3), beri jeda sekitar satu detik di antara tiap langkah.
+- Kirim berkas aslinya (sebagai dokumen atau lewat Drive), bukan pesan suara WhatsApp.
+- Kalau jumlah seluruh rekaman lebih dari 4 menit 45 detik, buang langkah demo nomor 4 (sensor kosong).
 
 ## Skenario per adegan
 
-### Adegan 1 · Masalah dan pengguna (0:00–0:30) · Farraz
+### Adegan 1 · Perkenalan, masalah, dan pengguna (0:00–0:40) · Farraz
 
-**Layar:** judul proyek dan nama anggota (sampul laporan), lalu halaman depan aplikasi.
+**Layar:** judul proyek dan nama anggota, lalu halaman depan aplikasi.
 
 **Narasi:**
 
-> Halo, saya Farraz, bersama Jundan, dari Mekatronika dan Kecerdasan Buatan UPI. Klien kami adalah manajer pemeliharaan sebuah
-> grup pabrik dengan ratusan motor induksi. Motor pengganti baru datang dua sampai empat minggu setelah dipesan.
-> Kalau terlambat memesan, lini produksi berhenti. Kalau terlalu cepat, stok menumpuk. Karena itu kami membuat aplikasi
-> untuk perencana pemeliharaan: masukkan pembacaan sensor hari ini, keluar perkiraan sisa umur motor dan saran kapan harus memesan.
+> Halo semua, perkenalkan nama saya Farraz Firdaus Nur Ardiyanto dari Prodi Mekatronika dan Kecerdasan Buatan, dan ini teman
+> saya Jundan Abdul Wahhab, juga dari Prodi MKB. Di proyek kali ini, kami membuat sebuah sistem yang bisa memperkirakan
+> sisa umur pakai motor induksi di pabrik.
+>
+> Jadi, kalau ada motor yang rusak, penggantinya itu baru datang dua sampai empat minggu setelah dipesan. Kalau pesannya
+> telat, produksi berhenti. Kalau kecepatan, stoknya numpuk di gudang. Nah, dengan sistem ini, bagian pemeliharaan
+> tinggal memasukkan data sensor motornya, nanti keluar perkiraan sisa umurnya dan saran kapan harus pesan pengganti.
+> Untuk data dan modelnya, akan dijelaskan oleh Jundan.
 
-### Adegan 2 · Arsitektur: data → model → API → aplikasi (0:30–2:00)
+### Adegan 2 · Arsitektur: data → model → API → aplikasi (0:40–2:15)
 
-**2a. Data dan pembersihan (0:30–1:00) · Jundan**
+**2a. Data dan pembersihan (0:40–1:15) · Jundan**
 
-**Layar:** diagram arsitektur 5 detik (tunjuk kotak "Data klien" dan "Notebook"), lalu tabel ringkasan masalah data di *notebook*.
+**Layar:** diagram arsitektur sebentar (kotak "Data klien" dan "Notebook"), lalu tabel ringkasan masalah data di *notebook*.
 
-> Datanya 79.652 baris dari 300 motor, dicatat setiap hari sampai motor rusak. Data ini belum bersih. Penulisan nomor
-> motor tidak seragam, sehingga 300 motor terbaca sebagai 1.147. Suhu dari Plant Purwakarta ternyata dalam kelvin.
-> Ada baris kembar, dan ada getaran bernilai minus satu sebagai kode galat sensor. Semuanya kami perbaiki di notebook,
-> dan fungsi pembersihnya kami simpan di `src/features.py` supaya dipakai juga saat prediksi.
+> Oke, terima kasih Farraz. Jadi data yang kami pakai itu ada hampir 80 ribu baris dari 300 motor, yang dicatat setiap
+> hari sampai motornya rusak. Nah, waktu kami cek, ternyata datanya masih berantakan. Misalnya, nomor motornya ditulis
+> beda-beda, jadi yang harusnya 300 motor malah terbaca seribu lebih. Terus, suhu dari salah satu pabrik ternyata pakai
+> kelvin, bukan celsius. Ada juga baris yang dobel, sama nilai getaran minus satu, yang ternyata itu kode error dari
+> sensornya. Jadi semua itu kami bersihkan dulu sebelum melatih model.
 
-**2b. Pembagian data dan model (1:00–1:35) · Jundan**
+**2b. Pembagian data dan model (1:15–1:50) · Jundan**
 
 **Layar:** gambar getaran menurut umur total motor, lalu tabel perbandingan model di *notebook* (bagian 7).
 
-> Data kami bagi per motor, bukan per baris: 180 motor untuk melatih, 60 untuk validasi, 60 untuk uji. Alasannya, di
-> pabrik model dipakai untuk motor yang belum pernah dilihatnya. Kalau baris diacak, galat tampak 5 hari, padahal
-> sebenarnya 12 hari. Modelnya gradient boosting. Dari EDA kami melihat motor berumur panjang rusak lebih lambat, jadi
-> hari operasi kami jadikan masukan. Terakhir, baris dengan sisa umur di bawah 60 hari kami beri bobot tiga kali,
-> karena di rentang itulah keputusan pemesanan diambil.
+> Selanjutnya, datanya kami bagi per motor, bukan per baris: 180 motor untuk latihan, 60 untuk validasi, dan 60 untuk
+> pengujian. Kenapa per motor? Karena di pabrik nanti, modelnya dipakai untuk motor yang belum pernah dia lihat. Kalau
+> barisnya diacak, modelnya kelihatan cuma meleset 5 hari, padahal aslinya 12 hari.
+>
+> Untuk modelnya, kami pakai gradient boosting. Kami juga memasukkan lama motor beroperasi, karena motor yang umurnya
+> panjang ternyata rusaknya lebih pelan. Terakhir, motor yang sisa umurnya di bawah 60 hari kami kasih bobot tiga kali,
+> karena di situ keputusan pesannya diambil. Selanjutnya saya kembalikan ke Farraz.
 
-**2c. API dan deployment (1:35–2:00) · Farraz**
+**2c. API dan deployment (1:50–2:15) · Farraz**
 
-**Layar:** diagram arsitektur (tunjuk "Artifact" → "predictor.py" → "FastAPI di Vercel" → "Halaman web"), lalu sekilas `metadata.json` dan halaman `/docs`.
+**Layar:** diagram arsitektur ("Artifact" → "predictor.py" → "FastAPI di Vercel" → "Halaman web"), lalu sekilas halaman `/docs`.
 
-> Model dan metadatanya disimpan sebagai artifact. FastAPI memuatnya satu kali, memeriksa masukan, lalu mengembalikan
-> prediksi, kisaran, dan status. API ini kami pasang di Vercel dan sekaligus menyajikan halaman web untuk pengguna.
-> Pembuat fitur berada di dalam pipeline, jadi kode saat prediksi sama persis dengan saat pelatihan.
+> Oke, jadi model yang sudah jadi tadi kami simpan, lalu kami buatkan API-nya pakai FastAPI. Tugas API ini ada tiga:
+> memeriksa masukannya, menjalankan modelnya, lalu mengembalikan perkiraan, kisaran, dan statusnya. Kode pengolah datanya
+> juga ikut disimpan bareng modelnya, jadi perhitungan waktu prediksi sama persis dengan waktu pelatihan. Setelah itu
+> API-nya kami deploy ke Vercel, sekalian dengan halaman webnya. Sekarang kita langsung coba aplikasinya.
 
-### Adegan 3 · Demo langsung (2:00–3:30) · Farraz
+### Adegan 3 · Demo langsung (2:15–3:35) · Farraz
 
 **Layar:** https://ml.deltavia.org sepanjang adegan.
 
 | # | Aksi di layar | Yang muncul | Narasi |
 |---|---|---|---|
-| 1 | Tunjuk isian bawaan, klik **Perkirakan Sisa Umur** | 24 hari, kisaran 18–34 hari, **Pesan Pengganti Sekarang** | "Ini aplikasinya, bisa dibuka dari ponsel juga. Motor 11 kW, umur 240 hari, getaran 5,6. Perkiraannya 24 hari dengan kisaran 18 sampai 34 hari. Statusnya pesan pengganti sekarang, karena pengiriman bisa sampai empat minggu." |
-| 2 | Klik contoh **Hampir rusak**, lalu **Perkirakan Sisa Umur** | 2 hari, **Segera Ganti** | "Untuk motor dengan getaran 7,3, sisa umurnya tinggal 2 hari. Statusnya segera ganti." |
-| 3 | Klik contoh **Masukan mustahil**, lalu **Perkirakan Sisa Umur** | **Masukan Tidak Wajar**, dua baris alasan | "Sekarang masukan yang tidak wajar: getaran minus lima dan kecepatan 3.000 rpm. Aplikasi tidak berhenti. Masukan ditolak, pesannya menyebut kolom yang salah, dan API mengembalikan kode 422." |
-| 4 | Klik contoh **Mendekati rusak**, hapus isi **Arus**, lalu **Perkirakan Sisa Umur** | Hasil tetap keluar, ada bagian **Catatan** tentang sensor kosong | "Kalau sebuah sensor mati, isiannya cukup dikosongkan. Model tetap menjawab, disertai catatan bahwa tebakannya kurang tepat." |
-| 5 | Pindah ke **Banyak Motor**, klik **Pilih Berkas CSV**, pilih `contoh_batch.csv` | Ringkasan 2 / 1 / 5 dan tabel yang terurut | "Untuk banyak motor sekaligus, unggah CSV. Dari delapan motor, dua harus segera diganti, satu perlu dipesan, dan lima aman. Tabelnya diurutkan dari yang paling mendesak." |
+| 1 | Tunjuk isian bawaan, klik **Perkirakan Sisa Umur** | 24 hari, kisaran 18–34 hari, **Pesan Pengganti Sekarang** | "Nah, ini tampilan aplikasinya, bisa dibuka juga dari HP. Misalnya ada motor 11 kilowatt yang sudah jalan 240 hari, getarannya 5,6. Saya klik Perkirakan Sisa Umur. Nah, hasilnya sisa umurnya sekitar 24 hari, dengan kisaran 18 sampai 34 hari. Statusnya 'pesan pengganti sekarang', karena pengirimannya bisa sampai empat minggu." |
+| 2 | Klik contoh **Hampir rusak**, lalu **Perkirakan Sisa Umur** | 2 hari, **Segera Ganti** | "Sekarang kita coba motor yang getarannya sudah 7,3. Ternyata sisa umurnya tinggal 2 hari, dan statusnya berubah jadi 'segera ganti'." |
+| 3 | Klik contoh **Masukan mustahil**, lalu **Perkirakan Sisa Umur** | **Masukan Tidak Wajar**, dua baris alasan | "Terus, gimana kalau datanya salah ketik? Saya coba isi getarannya minus lima dan kecepatannya 3.000 rpm. Nah, aplikasinya nggak error. Masukannya ditolak, dan ada pesan isian mana yang salah. Kalau di API-nya, ini dikembalikan sebagai kode 422." |
+| 4 | Klik contoh **Mendekati rusak**, hapus isi **Arus**, lalu **Perkirakan Sisa Umur** | Hasil tetap keluar, ada bagian **Catatan** tentang sensor kosong | "Kalau ada sensor yang mati, isiannya dikosongkan saja. Modelnya tetap menjawab, tapi ada catatan kalau hasilnya kurang akurat." |
+| 5 | Pindah ke **Banyak Motor**, klik **Pilih Berkas CSV**, pilih `contoh_batch.csv` | Ringkasan 2 / 1 / 5 dan tabel yang terurut | "Yang terakhir, kalau motornya banyak, tinggal upload file CSV. Dari delapan motor ini, dua harus segera diganti, satu perlu dipesan, dan lima masih aman. Tabelnya juga sudah diurutkan dari yang paling mendesak. Untuk hasil dan keterbatasannya, akan dijelaskan oleh Jundan." |
 
 Langkah 3 adalah yang wajib (satu masukan tidak wajar). Langkah 4 boleh dibuang jika waktu tidak cukup.
 
-### Adegan 4 · Hasil, *baseline*, dan keterbatasan (3:30–4:30) · Jundan
+### Adegan 4 · Hasil, *baseline*, dan keterbatasan (3:35–4:35) · Jundan
 
-**Layar:** `08_hasil_test.png` (0:00–0:35 dari adegan ini), lalu tab **Tentang Model** di aplikasi untuk bagian keterbatasan.
+**Layar:** `08_hasil_test.png` untuk bagian hasil, lalu tab **Tentang Model** di aplikasi untuk bagian keterbatasan.
 
-> Metrik utama kami adalah MAE pada baris dengan sisa umur di bawah 60 hari. Pada data uji, yang hanya kami buka satu
-> kali di akhir, baseline regresi linear meleset rata-rata 30,9 hari. Model kami meleset 6,8 hari, atau 78 persen lebih
-> kecil. Seluruh 60 motor uji mendapat peringatan untuk memesan paling lambat 28 hari sebelum rusak.
+> Oke, sekarang hasilnya. Ukuran yang kami pakai itu MAE, yaitu rata-rata seberapa jauh tebakan modelnya meleset, khusus
+> untuk motor yang sisa umurnya di bawah 60 hari. Di data uji, yang baru kami buka satu kali di akhir, baseline regresi
+> linear meleset rata-rata hampir 31 hari. Sedangkan model kami melesetnya kurang dari 7 hari, jadi lebih dari empat kali
+> lebih kecil. Semua dari 60 motor uji juga dapat peringatan paling lambat 28 hari sebelum rusak.
 >
-> Model ini punya batas. Untuk motor yang masih sehat, di atas kira-kira 150 hari, tebakan hanya berarti "masih lama".
-> Model hanya mengenal tiga tipe motor yang belum pernah diperbaiki. Tebakan dibuat dari pembacaan satu hari, jadi bisa
-> naik-turun. Datanya juga sintetis, sedangkan motor nyata bisa rusak mendadak. Langkah berikutnya adalah memakai
-> riwayat beberapa hari, yang pada percobaan kami menurunkan galat menjadi 4,6 hari. Terima kasih.
+> Tapi sistem ini masih punya keterbatasan. Untuk motor yang masih sehat, modelnya cuma bisa bilang "masih lama", belum
+> bisa kasih angka yang tepat. Tebakannya juga dibuat dari data satu hari saja, jadi bisa naik-turun. Dan datanya itu
+> data buatan, padahal motor asli bisa saja rusak mendadak. Ke depannya, kami ingin memakai riwayat beberapa hari, karena
+> di percobaan kami galatnya turun jadi sekitar empat setengah hari. Mungkin itu saja dari kami, terima kasih.
 
-## Angka yang harus diucapkan dengan tepat
+## Angka persis di balik narasi
+
+Di narasi angkanya dibulatkan ("hampir 80 ribu", "hampir 31 hari", "kurang dari 7 hari"). Angka persisnya di bawah ini,
+untuk berjaga-jaga kalau ditanya.
 
 | Hal | Angka |
 |---|---|
